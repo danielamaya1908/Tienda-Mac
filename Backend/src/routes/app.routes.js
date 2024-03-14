@@ -86,9 +86,7 @@ router.get("/product/category", getCategory);
 router.get("/product/sub-category", getSubCategory);
 
 router.post("/product", postProduct);
-
 router.delete("/deleteProduct/:id", deleteProductByPk);
-
 router.put("/product/:id", putProductbyID);
 
 // Rutas de Usuarios
