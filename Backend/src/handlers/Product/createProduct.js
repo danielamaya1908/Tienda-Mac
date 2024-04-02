@@ -1,4 +1,4 @@
-const { Product, Image, Size, Stock, Color } = require("../../db");
+const { Product, Image, Size, Stock, Color,  } = require("../../db");
 
 const createProduct = async ({
   title,

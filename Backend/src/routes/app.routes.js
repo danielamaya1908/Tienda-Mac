@@ -8,12 +8,14 @@ const deleteProductByPk = require("../controllers/product/deleteProductByPk");
 const putProductbyID = require("../controllers/product/putProductbyID");
 const searchProduct = require("../controllers/product/searchProduct");
 const postRegister = require("../controllers/User/postRegister");
+const postExcel = require('../controllers/product/postExcel');
 
 const postLogin = require("../controllers/User/postLogin");
 const PostRegisterGoogle = require("../controllers/User/postRegisterGoogle");
 const getUser = require("../controllers/User/getUser");
 const getProductAdmin = require("../controllers/product/getProductAdmin");
 const getAllUsers = require("../controllers/User/getAllUser");
+const { createUserAdmin, validateUserAdmin } = require("../controllers/User/createUserAdmin");
 
 const postShopping = require("../controllers/Carrito/PostShopping");
 const putShopping = require("../controllers/Carrito/PutShopping");
@@ -86,8 +88,10 @@ router.get("/product/category", getCategory);
 router.get("/product/sub-category", getSubCategory);
 
 router.post("/product", postProduct);
-router.delete("/deleteProduct/:id", deleteProductByPk);
+router.delete("/product/:id", deleteProductByPk);
 router.put("/product/:id", putProductbyID);
+router.post("/postExcel", postExcel);
+
 
 // Rutas de Usuarios
 router.post("/userRegister", postRegister);
@@ -95,6 +99,8 @@ router.post("/google", PostRegisterGoogle);
 router.post("/login", postLogin);
 router.post("/password-recover", PostRecoverPassword);
 router.post("/password-update", PostUpdatePassword);
+router.post("/userAdmin", createUserAdmin);
+router.post('/validateUserAdmin', validateUserAdmin);
 
 router.put("/user/:id", putUserById);
 router.put("/user/:id/password", putPassword);

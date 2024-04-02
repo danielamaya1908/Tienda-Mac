@@ -16,7 +16,7 @@ const getProduct = async (req, res) => {
       page = 1;
     }
     if (isNaN(limit) || !limit) {
-      limit = 12;
+      limit = 100;
     }
 
     let orderCriteria = [];

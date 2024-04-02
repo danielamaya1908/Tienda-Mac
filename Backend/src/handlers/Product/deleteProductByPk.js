@@ -1,19 +1,13 @@
 const { Product } = require("../../db");
 
-const deleteProduct = async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findByPk(id);
+const deleteProductHandler = async (productId) => {
+  const product = await Product.findByPk(productId);
 
-  if (!product || !product.available) {
-    return res.status(404).json({ error: "Producto no encontrado" });
+  if (!product) {
+    throw new Error("Producto no encontrado");
   }
 
-  product.available = false;
-  await product.save();
-
-  return res.status(200).json({
-    message: "producto eliminado",
-  });
+  await product.destroy();
 };
 
-module.exports = { deleteProduct };
+module.exports = deleteProductHandler;

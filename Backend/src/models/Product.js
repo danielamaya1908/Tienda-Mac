@@ -41,6 +41,10 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      color: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       available: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
@@ -52,6 +56,16 @@ module.exports = (sequelize) => {
       countReviews: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
     },
     { timestamps: true }
