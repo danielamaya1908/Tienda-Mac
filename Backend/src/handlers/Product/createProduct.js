@@ -1,4 +1,4 @@
-const { Product, Image, Size, Stock, Color,  } = require("../../db");
+/* const { Product, Image, Capacities, Stock, Color,  } = require("../../db");
 
 const createProduct = async ({
   title,
@@ -29,12 +29,12 @@ const createProduct = async ({
 
     // Crear tallas y stocks asociados
     for (const sizeInfo of sizes) {
-      const [size, created] = await Size.findOrCreate({
+      const [size, created] = await Capacities.findOrCreate({
         where: { name: sizeInfo.size },
       });
       await Stock.create({
         ProductId: currentProduct.id,
-        SizeId: size.id,
+        CapacitiesId: size.id,
         quantity: sizeInfo.stock,
       });
     }
@@ -69,4 +69,4 @@ const createProduct = async ({
   }
 };
 
-module.exports = createProduct;
+module.exports = createProduct; */

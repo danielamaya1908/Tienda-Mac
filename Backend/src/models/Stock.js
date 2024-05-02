@@ -1,5 +1,4 @@
 const { DataTypes } = require("sequelize");
-const Size = require("./Size");
 const Product = require("./Product");
 
 module.exports = (sequelize) => {
@@ -10,13 +9,6 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         references: {
           model: Product,
-          key: "id",
-        },
-      },
-      SizeId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: Size,
           key: "id",
         },
       },

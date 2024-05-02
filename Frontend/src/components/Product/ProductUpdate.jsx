@@ -2,186 +2,114 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ProductUpdate = ({ productId, onClose }) => {
-  const [productData, setProductData] = useState({
-    title: '',
-    description: '',
-    brand: '',
-    color: '',
-    category: '',
-    subCategory: '',
-    sizes: '',
-    gender: '',
-    price: '',
-    discount: '',
-    images: '',
-    available: true,
-  });
+    const [productData, setProductData] = useState({
+        itemId: '',
+        name: '',
+        description: '',
+        price: 0,
+        priceUsd: 0,
+        quantity: 0,
+        image: '',
+        guarantee: '',
+        currency: '',
+        tax: '',
+        barcode: '',
+        categoryId: '',
+        brandId: '',
+    });
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3005/detail/${productId}`);
-        if (response.data) {
-          setProductData({
-            title: response.data.title || '',
-            description: response.data.description || '',
-            brand: response.data.brand || '',
-            color: Array.isArray(response.data.color) ? response.data.color.join(', ') : '',
-            category: response.data.category || '',
-            subCategory: response.data.subCategory || '',
-            sizes: Array.isArray(response.data.sizes) ? response.data.sizes.join(', ') : '',
-            gender: response.data.gender || '',
-            price: response.data.price || '',
-            discount: response.data.discount || '',
-            images: Array.isArray(response.data.images) ? response.data.images.join(', ') : '',
-            available: response.data.available !== undefined ? response.data.available : true,
-          });
-          console.log('Datos del producto cargados:', response.data); // Datos después de cargar
-        } else {
-          console.error('Error fetching product: No data');
+    useEffect(() => {
+        fetchProductData();
+    }, []);
+
+    const fetchProductData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3005/product/${productId}`);
+            setProductData(response.data); // Suponiendo que la respuesta del backend es un objeto con los datos del producto
+        } catch (error) {
+            console.error('Error fetching product data:', error);
         }
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
     };
 
-    fetchProduct();
-  }, [productId]); // No necesitamos agregar productData aquí para evitar efectos secundarios
-
-  const handleUpdateProduct = async () => {
-    //e.preventDefault(); // Prevents the default form submit action
-    const updatedProductData = {
-      ...productData,
-      sizes: productData.sizes.split(',').filter(size => size.trim() !== '').map(size => size.trim()),
-      images: productData.images.split(',').filter(image => image.trim() !== '').map(image => image.trim()),
-      available: productData.available, // Añadimos el campo 'available' con valor del estado actual
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProductData({
+            ...productData,
+            [name]: value,
+        });
     };
 
-    console.log('Datos del producto antes de actualizar:', updatedProductData); // Datos antes de actualizar
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.put(`http://localhost:3005/product/${productId}`, productData);
+            onClose();
+        } catch (error) {
+            console.error('Error updating product:', error);
+        }
+    };
 
-    try {
-      const response = await axios.put(`http://localhost:3005/product/${productId}`, updatedProductData);
-      console.log('Product updated successfully:', response.data);
-      onClose();
-    } catch (error) {
-      console.error('Error updating product:', error);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log(`Input cambiado - name: ${name}, value: ${value}`); // Valor de input cuando cambia
-    setProductData({ ...productData, [name]: value });
-  };
-
-  // Render the form with inputs for all productData fields
-return (
-    <div className="container">
-      <h2>Editar Producto</h2>
-      <form onSubmit={handleUpdateProduct}>
-        <label>
-          Título:
-          <input
-            type="text"
-            name="title"
-            value={productData.title}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Descripción:
-          <textarea
-            name="description"
-            value={productData.description}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Marca:
-          <input
-            type="text"
-            name="brand"
-            value={productData.brand}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Color:
-          <input
-            type="text"
-            name="color"
-            value={productData.color}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Categoría:
-          <input
-            type="text"
-            name="category"
-            value={productData.category}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Subcategoría:
-          <input
-            type="text"
-            name="subCategory"
-            value={productData.subCategory}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Tamaños:
-          <input
-            type="text"
-            name="sizes"
-            value={productData.sizes}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Género:
-          <input
-            type="text"
-            name="gender"
-            value={productData.gender}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Precio:
-          <input
-            type="text"
-            name="price"
-            value={productData.price}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Descuento:
-          <input
-            type="text"
-            name="discount"
-            value={productData.discount}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Imágenes:
-          <input
-            type="text"
-            name="images"
-            value={productData.images}
-            onChange={handleChange}
-          />
-        </label>
-        <button type="submit">Actualizar</button>
-        <button type="button" onClick={onClose}>Cancelar</button>
-      </form>
-    </div>
-  );
+    return (
+        <div className="container">
+            <h2>Editar Producto</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label htmlFor="itemId" className="form-label">Item ID</label>
+                    <input type="text" className="form-control" id="itemId" name="itemId" value={productData.itemId} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="name" className="form-label">Nombre</label>
+                    <input type="text" className="form-control" id="name" name="name" value={productData.name} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="description" className="form-label">Descripción</label>
+                    <textarea className="form-control" id="description" name="description" value={productData.description} onChange={handleInputChange}></textarea>
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="price" className="form-label">Precio</label>
+                    <input type="number" className="form-control" id="price" name="price" value={productData.price} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="priceUsd" className="form-label">Precio USD</label>
+                    <input type="number" className="form-control" id="priceUsd" name="priceUsd" value={productData.priceUsd} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="quantity" className="form-label">Cantidad</label>
+                    <input type="number" className="form-control" id="quantity" name="quantity" value={productData.quantity} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="image" className="form-label">Imagen</label>
+                    <input type="text" className="form-control" id="image" name="image" value={productData.image} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="guarantee" className="form-label">Garantía</label>
+                    <input type="text" className="form-control" id="guarantee" name="guarantee" value={productData.guarantee} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="currency" className="form-label">Moneda</label>
+                    <input type="text" className="form-control" id="currency" name="currency" value={productData.currency} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="tax" className="form-label">Impuesto</label>
+                    <input type="text" className="form-control" id="tax" name="tax" value={productData.tax} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="barcode" className="form-label">Código de barras</label>
+                    <input type="text" className="form-control" id="barcode" name="barcode" value={productData.barcode} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="categoryId" className="form-label">ID de Categoría</label>
+                    <input type="text" className="form-control" id="categoryId" name="categoryId" value={productData.categoryId} onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="brandId" className="form-label">ID de Marca</label>
+                    <input type="text" className="form-control" id="brandId" name="brandId" value={productData.brandId} onChange={handleInputChange} />
+                </div>
+                <button type="submit" className="btn btn-primary">Actualizar Producto</button>
+                <button type="button" className="btn btn-secondary ms-2" onClick={onClose}>Cancelar</button>
+            </form>
+        </div>
+    );
 };
 
 export default ProductUpdate;

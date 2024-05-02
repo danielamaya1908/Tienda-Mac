@@ -1,10 +1,10 @@
-const { Product, Stock, Image, Color, Size } = require("../../db");
+const { Product, Stock, Image, Color, Capacities } = require("../../db");
 
 const getProductAdmin = async (req, res) => {
   try {
     const products = await Product.findAll({
       include: [
-        { model: Size, attributes: ["name"], through: { model: Stock } },
+        { model: Capacities, attributes: ["name"], through: { model: Stock } },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
         { model: Color, attributes: ["name"], through: { attributes: [] } },
       ],
@@ -19,7 +19,7 @@ const getProductAdmin = async (req, res) => {
       // Modificar el array de imágenes
 
       modifiedProduct.Images = modifiedProduct.Images.map((image) => image.url);
-      // modifiedProduct.Sizes = modifiedProduct.Sizes.map((Size) => Size.name);
+      // modifiedProduct.Capacitiess = modifiedProduct.Capacitiess.map((Capacities) => Capacities.name);
 
       // Verificar si existe la propiedad Color antes de mapear
       if (modifiedProduct.Colors) {
@@ -27,12 +27,12 @@ const getProductAdmin = async (req, res) => {
       }
 
       // Modificar el array de tallas y cantidades (stock)
-      modifiedProduct.Stocks = modifiedProduct.Sizes.map((size) => ({
-        [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Size
+      modifiedProduct.Stocks = modifiedProduct.Capacitiess.map((size) => ({
+        [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Capacities
       }));
 
-      // Eliminar la propiedad 'Size' si no es necesaria en este punto
-      delete modifiedProduct.Size;
+      // Eliminar la propiedad 'Capacities' si no es necesaria en este punto
+      delete modifiedProduct.Capacities;
 
       return modifiedProduct;
     });

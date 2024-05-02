@@ -1,7 +1,7 @@
 const { ShoppingProduct, User_cart, User } = require("../../db");
 
 const deleteShoppingProduct = async (req, res) => {
-    let { userId, productId, productSize } = req.query;
+    let { userId, productId, productCapacities } = req.query;
     console.log(req.query);
     userId = parseInt(userId);
     productId = parseInt(productId);
@@ -17,7 +17,7 @@ const deleteShoppingProduct = async (req, res) => {
             where: {
                 productId: productId,
                 userId,
-                size: productSize
+                size: productCapacities
             }
         });
 

@@ -1,73 +1,104 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  sequelize.define(
-    "Product",
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      title: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.STRING(500),
-        allowNull: false,
-      },
-      price: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-      },
-      discount: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      brand: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      gender: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      category: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      subCategory: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      color: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      available: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-      },
-      averageScore: {
-        type: DataTypes.FLOAT,
-        defaultValue: 0,
-      },
-      countReviews: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
+  const Product = sequelize.define("Product", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    itemId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    priceUsd: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    guarantee: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    currency: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    tax: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+    },
+    barcode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Categories",
+        key: "id",
       },
     },
-    { timestamps: true }
-  );
+    brandId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Brands",
+        key: "id",
+      },
+    },
+    colorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Colors",
+        key: "id",
+      },
+    },
+    capacityId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Capacities",
+        key: "id",
+      },
+    },
+    subcategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Subcategories",
+        key: "id",
+      },
+    },
+    imageId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Images",
+        key: "id",
+      },
+    },
+  });
+
+  console.log("Product model defined");
+
+  return Product;
 };

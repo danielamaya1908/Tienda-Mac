@@ -1,29 +1,35 @@
+// Product.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Dashboard from '../Dashboard/Dashboard'; // Asegúrate de importar el componente Dashboard
 import ProductForm from '../Product/ProductForm';
 import ProductUpdate from '../Product/ProductUpdate';
+import ProductDetail from './ProductDetail';
+import MenuDashboard from '../MenuDashboard/MenuDashboard';
 
 const Product = () => {
     const [showProductForm, setShowProductForm] = useState(false);
     const [products, setProducts] = useState([]);
-    const [newProduct, setNewProduct] = useState({
-        title: '',
-        description: '',
-        price: 0,
-        discount: 0,
-    });
-    const [editProductId, setEditProductId] = useState(null); // Nuevo estado para almacenar el ID del producto a editar
+    const [editProductId, setEditProductId] = useState(null);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        if (selectedProductId) {
+            fetchProduct(selectedProductId);
+        } else {
+            setSelectedProduct(null);
+        }
+    }, [selectedProductId]);
+
     const fetchProducts = async () => {
         try {
             const response = await axios.get('http://localhost:3005/product');
-            if (response.data && Array.isArray(response.data.data)) {
-                setProducts(response.data.data);
+            if (response.data && Array.isArray(response.data)) {
+                setProducts(response.data);
             } else {
                 console.error('Error fetching products: response data is not an array');
             }
@@ -32,93 +38,97 @@ const Product = () => {
         }
     };
 
-    const handleAddProduct = async (productData) => {
+    const fetchProduct = async (productId) => {
         try {
-            await axios.post('http://localhost:3005/product', productData);
-            fetchProducts(); // Refetch products after adding a new one
-            setShowProductForm(false);
+            const response = await axios.get(`http://localhost:3005/product/${productId}`);
+            setSelectedProduct(response.data);
         } catch (error) {
-            console.error('Error adding product:', error);
+            console.error('Error fetching product:', error);
         }
     };
 
-    const handleEditProduct = async (productId) => {
-        try {
-            const response = await axios.get(`http://localhost:3005/detail/${productId}`);
-            const productData = response.data; // Suponiendo que los datos del producto están en la propiedad 'data' de la respuesta
-            setNewProduct(productData); // Establecer los datos del producto en el estado para el formulario de edición
-            setEditProductId(productId); // Establecer el ID del producto a editar
-        } catch (error) {
-            console.error('Error al editar el producto:', error);
-        }
+    const handleEditProduct = (productId) => {
+        setEditProductId(productId);
+    };
+
+    const handleCloseEdit = () => {
+        setEditProductId(null);
     };
 
     const handleDeleteProduct = async (productId) => {
         try {
             await axios.delete(`http://localhost:3005/product/${productId}`);
-            fetchProducts(); // Refetch products after deletion
+            fetchProducts();
         } catch (error) {
             console.error('Error deleting product:', error);
         }
     };
 
+    const handleAddProduct = async (formData) => {
+        try {
+            const response = await axios.post('http://localhost:3005/product', formData);
+            if (response.status === 201) {
+                fetchProducts();
+                setShowProductForm(false);
+            } else {
+                console.error('Error adding product: unexpected response status', response.status);
+            }
+        } catch (error) {
+            console.error('Error adding product:', error);
+        }
+    };
+
+    const handleShowDetails = (productId) => {
+        setSelectedProductId(productId);
+    };
+
     return (
         <>
-            <Dashboard />
+            
             <div className="container-fluid">
                 <div className="row">
-                    <nav id="sidebar" className="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-                        <div className="position-sticky">
-                            <ul className="nav flex-column">
-                                {/* Este botón no debería estar aquí */}
-                            </ul>
-                        </div>
-                    </nav>
+                    <MenuDashboard />     
                     <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 className="h2 mt-0">Productos</h1>
-
-                            {/* Botón para agregar producto */}
                             <button className="btn btn-primary" onClick={() => setShowProductForm(!showProductForm)}>
                                 {showProductForm ? 'Cerrar Formulario' : 'Agregar Producto'}
                             </button>
                         </div>
                         {showProductForm && <ProductForm onSubmit={handleAddProduct} onClose={() => setShowProductForm(false)} />}
-                        {editProductId && <ProductUpdate productId={editProductId} onClose={() => setEditProductId(null)} />} {/* Mostrar ProductUpdate si hay un ID de producto para editar */}
+                        {editProductId && <ProductUpdate productId={editProductId} onClose={handleCloseEdit} />}
+                        {selectedProduct && <ProductDetail product={selectedProduct} />}
                         <h2>Lista de Productos</h2>
+                        <hr></hr>
                         <div className="table-responsive">
                             <table className="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Título</th>
-                                        <th>Descripción</th>
-                                        <th>Marca</th>
-                                        <th>Color</th>
-                                        <th>Categoría</th>
-                                        <th>Subcategoría</th>
-                                        <th>Tallas</th>
-                                        <th>Género</th>
-                                        <th>Imágenes</th>
+                                        <th>Item ID</th>
+                                        <th>Nombre</th>
                                         <th>Precio</th>
-                                        <th>Descuento</th>
+                                        <th>Precio USD</th>
+                                        <th>Cantidad</th>         
+                                        <th>Garantía</th>
+                                        <th>Moneda</th>
+                                        <th>Código de barras</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Array.isArray(products) && products.map((product) => (
                                         <tr key={product.id}>
-                                            <td>{product.title}</td>
-                                            <td>{product.description}</td>
-                                            <td>{product.brand}</td>
-                                            <td>{product.color}</td>
-                                            <td>{product.category}</td>
-                                            <td>{product.subCategory}</td>
-                                            <td>{product.sizes}</td>
-                                            <td>{product.gender}</td>
-                                            <td>{product.images}</td>
+                                            <td>{product.itemId}</td>
+                                            <td>{product.name}</td>
                                             <td>{product.price}</td>
-                                            <td>{product.discount}</td>
+                                            <td>{product.priceUsd}</td>
+                                            <td>{product.quantity}</td>
+                                            <td>{product.guarantee}</td>
+                                      
+                                            <td>{product.tax}</td>
+                                            <td>{product.barcode}</td>
+                                           
                                             <td>
+                                                <button className="btn btn-info" onClick={() => handleShowDetails(product.id)}>Detalle</button>
                                                 <button className="btn btn-primary" onClick={() => handleEditProduct(product.id)}>Editar</button>
                                                 <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>Eliminar</button>
                                             </td>

@@ -1,6 +1,6 @@
 
 
-const { Product, Stock, Image, Color, Size, Reviews } = require("../../db");
+const { Product, Stock, Image, Color, Capacities, Reviews } = require("../../db");
 
 const { Op } = require("sequelize");
 
@@ -15,7 +15,7 @@ const getDiscountProducts = async (req, res) => {
       },
       include: [
 
-        { model: Size, attributes: ["name"], through: { model: Stock } },
+        { model: Capacities, attributes: ["name"], through: { model: Stock } },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
         { model: Color, attributes: ["name"], through: { attributes: [] } },
 

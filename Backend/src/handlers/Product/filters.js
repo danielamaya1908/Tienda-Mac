@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Product, Image, Stock, Size } = require("../../db");
+const { Product, Image, Stock, Capacities } = require("../../db");
 
 const applyFilters = async (filters) => {
   try {
@@ -28,7 +28,7 @@ const applyFilters = async (filters) => {
     }
 
     if (sizes && sizes.length > 0) {
-      filterCriteria.SizeId = {
+      filterCriteria.CapacitiesId = {
         [Op.in]: sizes,
       };
     }
@@ -44,7 +44,7 @@ const applyFilters = async (filters) => {
       include: [
         {
           model: Stock,
-          include: [{ model: Size, attributes: ["name"] }],
+          include: [{ model: Capacities, attributes: ["name"] }],
         },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
       ],

@@ -1,56 +1,80 @@
-const { Product } = require("../../db");
-const updateProduct = require("../../handlers/Product/updateProduct");
+const { Product, Category, Brand } = require("../../db");
 
-const putProductbyID = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    // Se verifica que exista en la base de datos el Producto a editar.
-    const existe = await Product.findByPk(id);
-    // Se responde que no existe si no se encuentra el Producto.
-    if (!existe) {
-      return res.status(404).json({ message: "El producto no existe" });
-    }
-
     const {
-      title,
+      itemId,
+      name,
       description,
-      brand,
-      category,
-      subCategory,
-      sizes,
-      color,
-      gender,
-      images,
-      available,
-    } = req.body;
-    let price = Number(req.body.price);
-    let discount = Number(req.body.discount);
-
-    // El precio debe quedar registrado en la BDD con el descuento aplicado.
-    if (discount > 0 && discount <= 100) { 
-      price = parseInt(((price * (100 - discount)) / 100));
-    }
-
-    const response = await updateProduct({
-      id,
-      title,
-      description,
-      category,
-      subCategory,
-      brand,
-      sizes,
       price,
-      color,
-      discount,
-      images,
-      gender,
-      available,
+      priceUsd,
+      quantity,
+      image,
+      guarantee,
+      currency,
+      tax,
+      barcode,
+      categoryId,
+      brandId,
+    } = req.body;
+
+    const product = await Product.findByPk(id, {
+      include: [Category, Brand],
     });
 
-    return res.status(200).json({ message: response });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    const brand = await Brand.findByPk(brandId);
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+
+    await product.update({
+      itemId,
+      name,
+      description,
+      price,
+      priceUsd,
+      quantity,
+      image,
+      guarantee,
+      currency,
+      tax,
+      barcode,
+      categoryId,
+      brandId,
+    });
+
+    // Enviar solo los datos necesarios del producto actualizado en la respuesta
+    const updatedProduct = {
+      itemId: product.itemId,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      priceUsd: product.priceUsd,
+      quantity: product.quantity,
+      image: product.image,
+      guarantee: product.guarantee,
+      currency: product.currency,
+      tax: product.tax,
+      barcode: product.barcode,
+      categoryId: product.categoryId,
+      brandId: product.brandId,
+    };
+
+    res.status(200).json(updatedProduct);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Hubo un error al actualizar el producto." });
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: "Error updating product" });
   }
 };
-module.exports = putProductbyID;
+
+module.exports = updateProduct;

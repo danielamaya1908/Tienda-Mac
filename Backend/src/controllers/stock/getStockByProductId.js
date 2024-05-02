@@ -1,4 +1,4 @@
-const { Stock, Size } = require("../../db");
+const { Stock, Capacities } = require("../../db");
 
 const getStock = async (req, res) => {
   try {
@@ -12,9 +12,9 @@ const getStock = async (req, res) => {
 
     const formattedResponse = await Promise.all(
       response.map(async (stock) => {
-        const talla = await Size.findOne({
+        const talla = await Capacities.findOne({
           where: {
-            id: stock.dataValues.SizeId,
+            id: stock.dataValues.CapacitiesId,
           },
         });
 

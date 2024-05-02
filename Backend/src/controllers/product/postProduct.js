@@ -1,61 +1,81 @@
-const { Product, Brand } = require("../../db");
-const createProduct = require("../../handlers/Product/createProduct");
+const fs = require("fs");
+const { Product, Category, Brand, Colors, Capacities, Subcategories } = require("../../db");
 
 const postProduct = async (req, res) => {
   try {
-    let { title, description, brand, color, category, subCategory, sizes, gender, images } =
-      req.body;
-    let brand_test = req.body.brand_test ? req.body.brand_test.toUpperCase() : '';
-    let price = Number(req.body.price);
-    let discount = Number(req.body.discount);
+    const {
+      itemId,
+      name,
+      description,
+      price,
+      priceUsd,
+      quantity,
+      guarantee,
+      currency,
+      tax,
+      barcode,
+      categoryId,
+      brandId,
+      colorId,
+      capacityId,
+      subcategoryId,
+    } = req.body;
 
-    if (isNaN(price) || isNaN(discount)) {
-      throw new Error("El precio o el descuento no son válidos.");
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      console.log("Category not found with ID:", categoryId);
+      return res.status(404).json({ message: "Category not found" });
     }
 
-    // El precio debe quedar registrado en la BDD con el descuento aplicado.
-    if (discount > 0 && discount <= 100) { 
-      price = parseInt(((price * (100 - discount)) / 100));
+    const brand = await Brand.findByPk(brandId);
+    if (!brand) {
+      console.log("Brand not found with ID:", brandId);
+      return res.status(404).json({ message: "Brand not found" });
     }
-    if (title && description && brand && price && category && sizes.length && images.length) {
-      const isThisAlreadyCreated = await Product.findOne({
-        where: {
-          title: title.toUpperCase(),
-          description: description.toUpperCase(),
-          brand: brand.toUpperCase(),
-          category: category.toUpperCase(),
-          subCategory: subCategory?.toUpperCase(),
-          gender: gender.toUpperCase(),
-          price,
-          discount,
-        },
-      });
 
-      // Si no se encuentra el producto en la base de datos, se crea la instancia.
-      if (!isThisAlreadyCreated) {
-        const findBrand = await Brand.findOne({ where: { name: brand_test }, raw: true });
-        const response = await createProduct({
-          title,
-          description,
-          category,
-          subCategory,
-          brand,
-          color,
-          sizes,
-          price,
-          discount,
-          images,
-          gender,
-          brand_id: findBrand ? findBrand.id : null,
-        });
+    const color = await Colors.findByPk(colorId);
+    if (!color) {
+      console.log("Color not found with ID:", colorId);
+      return res.status(404).json({ message: "Color not found" });
+    }
 
-        return res.status(201).json(response);
-      } else throw Error("El producto ya existe");
-    } else throw Error("Faltan datos");
+    const capacity = await Capacities.findByPk(capacityId);
+    if (!capacity) {
+      console.log("Capacity not found with ID:", capacityId);
+      return res.status(404).json({ message: "Capacity not found" });
+    }
+
+    const subcategory = await Subcategories.findByPk(subcategoryId);
+    if (!subcategory) {
+      console.log("Subcategory not found with ID:", subcategoryId);
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+
+    const newProduct = await Product.create({
+      itemId,
+      name,
+      description,
+      price,
+      priceUsd,
+      quantity,
+      guarantee,
+      currency,
+      tax,
+      barcode,
+      categoryId,
+      brandId,
+      colorId,
+      capacityId,
+      subcategoryId,
+    });
+
+    console.log("New product created:", newProduct.toJSON());
+
+    res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error creating product:", error);
+    res.status(500).json({ message: "Error creating product" });
   }
 };
 
 module.exports = postProduct;
-

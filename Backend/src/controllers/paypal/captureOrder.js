@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { Order, ShoppingCart, Cart_Product, Size, Stock } = require("../../db");
+const { Order, ShoppingCart, Cart_Product, Capacities, Stock } = require("../../db");
 const { PAYPAL_URL, PAYPAL_CLIENT, PAYPAL_SECRET_KEY, HOST_FRONT } = require("../../../config");
 const {sendOrderConfirmationEmail} = require("../../email/mailer/mailer")
 
@@ -63,14 +63,14 @@ const captureOrder = async (req, res) => {
                 const talle = matchParts[1];
                 const cantidad = matchParts[2];
 
-                // Buscar todos los ID de Size relacionados con el talle
-                const sizes = await Size.findAll({
+                // Buscar todos los ID de Capacities relacionados con el talle
+                const sizes = await Capacities.findAll({
                   where: {
                     name: talle,
                   },
                 });
                 if (sizes.length > 0) {
-                  // Iterar sobre cada Size encontrado
+                  // Iterar sobre cada Capacities encontrado
                   for (const size of sizes) {
                     const sizeId = size.id;
 
@@ -78,7 +78,7 @@ const captureOrder = async (req, res) => {
                     const stockRecord = await Stock.findOne({
                       where: {
                         ProductId: productId,
-                        SizeId: sizeId,
+                        CapacitiesId: sizeId,
                       },
                     });
 
@@ -92,20 +92,20 @@ const captureOrder = async (req, res) => {
                         {
                           where: {
                             ProductId: productId,
-                            SizeId: sizeId,
+                            CapacitiesId: sizeId,
                           },
                         }
                       );
 
                       console.log(
-                        `Stock actualizado para ProductId: ${productId}, SizeId: ${sizeId}, Cantidad restada: ${cantidad}`
+                        `Stock actualizado para ProductId: ${productId}, CapacitiesId: ${sizeId}, Cantidad restada: ${cantidad}`
                       );
                     } else {
-                      console.log(`No se encontró registro de stock para ProductId: ${productId}, SizeId: ${sizeId}`);
+                      console.log(`No se encontró registro de stock para ProductId: ${productId}, CapacitiesId: ${sizeId}`);
                     }
                   }
                 } else {
-                  console.log(`No se encontraron Sizes para el talle ${talle}`);
+                  console.log(`No se encontraron Capacitiess para el talle ${talle}`);
                 }
               } else {
                 console.log(`No se pudo analizar la combinación en el detalle para el producto con ID ${productId}`);

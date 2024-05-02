@@ -33,17 +33,18 @@ const {
   Order,
   Transaction,
   Image,
-  Size,
   Stock,
   ShoppingCart,
   Purchase,
   Cart_Product,
   Reviews,
-  Favorite,
-  Storage
+  Storage,
+  Category,
+  Colors,
+  Subcategories,
+  Capacities,
 } = sequelize.models;
 
-// RELACIÓN DE LAS TABLAS:
 
 // creará una columna 'order_id' en la tabla Transaction con el id de una orden.
 Order.hasMany(Transaction, {
@@ -55,23 +56,14 @@ Transaction.belongsTo(Order, {
   targetKey: "id",
 });
 
-//relaciono la tabla size con la tabla stock
-Size.belongsToMany(Product, { through: Stock });
-Product.belongsToMany(Size, { through: Stock });
 
 //relaciono la tabla Storage con la tabla stock
 Storage.belongsToMany(Product, { through: Stock });
 Product.belongsToMany(Storage, { through: Stock });
 
 // tabla intermedia de las imágenes de cada producto.
-Product.belongsToMany(Image, {
-  through: "product_images",
-  onDelete: "CASCADE",
-});
-Image.belongsToMany(Product, {
-  through: "product_images",
-  onDelete: "CASCADE",
-});
+Product.belongsTo(Image, { foreignKey: "imageId" });
+Image.hasOne(Product, { foreignKey: "imageId" });
 
 // tabla intermedia de los productos favoritos de cada usuario.
 User.belongsToMany(Product, { through: "user_like" });
@@ -102,38 +94,41 @@ ShoppingCart.belongsTo(User, { foreignKey: "UserId" });
 ShoppingCart.belongsToMany(Product, { through: Cart_Product });
 Product.belongsToMany(ShoppingCart, { through: Cart_Product });
 
-// tabla intermedia de las compras recibidas por cada usuario.
-Stock.belongsTo(Product, { foreignKey: "ProductId" });
-Stock.belongsTo(Size, { foreignKey: "SizeId" });
-
 Stock.belongsTo(Product, { foreignKey: "ProductId" });
 Stock.belongsTo(Storage, { foreignKey: "StorageId" });
 
-const { Color, Gender } = sequelize.models;
-
-// RELACIONES CON  Color y Gender:
-
-// Relación entre Product y Color (muchos a muchos)
-Product.belongsToMany(Color, { through: "ProductColor" });
-Color.belongsToMany(Product, { through: "ProductColor" });
-
-// Relación entre Product y Gender (muchos a muchos)
-Product.belongsToMany(Gender, { through: "ProductGender" });
-Gender.belongsToMany(Product, { through: "ProductGender" });
 
 // Relación entre Purchase y User, crea una tabla intermedia que funciona como carrito (UserPurchaseCart_product)
 User.belongsToMany(Purchase, { through: "User_purchaseCart" });
 Purchase.belongsToMany(User, { through: "User_purchaseCart" });
 
-Brand.hasMany(Product, {
-  foreignKey: "brand_id",
-  sourceKey: "id",
-});
-Product.belongsTo(Brand, {
-  foreignKey: "brand_id",
-  targetKey: "id",
-});
+Product.belongsTo(Category, { foreignKey: "categoryId" });
+Category.hasMany(Product, { foreignKey: "categoryId" });
 
+Product.belongsTo(Brand, { foreignKey: "brandId" });
+Brand.hasMany(Product, { foreignKey: "brandId" });
+
+// Agregar la relación entre Product y Colors
+Product.belongsTo(Colors, { foreignKey: "colorId" });
+Colors.hasMany(Product, { foreignKey: "colorId" });
+
+Product.belongsTo(Capacities, { foreignKey: "capacityId" });
+Capacities.hasMany(Product, { foreignKey: "capacityId" });
+
+Product.belongsTo(Subcategories, { foreignKey: "subcategoryId" });
+Subcategories.hasMany(Product, { foreignKey: "subcategoryId" });
+
+Category.hasMany(Subcategories, { foreignKey: 'categoryId' });
+Subcategories.belongsTo(Category, { foreignKey: 'categoryId' });
+
+Category.hasMany(Colors, { foreignKey: 'categoryId' });
+Colors.belongsTo(Category, { foreignKey: 'categoryId' });
+
+Category.hasMany(Capacities, { foreignKey: 'categoryId' });
+Capacities.belongsTo(Category, { foreignKey: 'categoryId' });
+
+// En tu configuración donde defines las relaciones:
+ // Esto indica que un Color puede tener muchos Products.
 
 
 // relación de reviews con users y products

@@ -1,4 +1,4 @@
-const { Product, Stock, Image, Color, Size } = require("../../db");
+const { Product, Stock, Image, Color, Capacities } = require("../../db");
 
 const getProperty = async (req, res) => {
     try {

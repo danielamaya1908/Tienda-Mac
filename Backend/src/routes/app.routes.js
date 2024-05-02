@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const postProduct = require("../controllers/product/postProduct");
+const postProduct = require('../controllers/product/postProduct');
 const getProductByPk = require("../controllers/product/getProductByPk");
 const getProduct = require("../controllers/product/getProduct");
 const getProductOrderBy = require("../controllers/product/getProductOrderBy");
@@ -8,14 +8,71 @@ const deleteProductByPk = require("../controllers/product/deleteProductByPk");
 const putProductbyID = require("../controllers/product/putProductbyID");
 const searchProduct = require("../controllers/product/searchProduct");
 const postRegister = require("../controllers/User/postRegister");
-const postExcel = require('../controllers/product/postExcel');
+const postExcelProducts = require('../controllers/product/postExcelProducts');
+const postExcelImages = require('../controllers/product/postExcelImages');
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Ruta para subir archivo Excel de productos
+router.post('/postExcelProducts', upload.single('file'), postExcelProducts);
+
+// Ruta para subir imágenes desde archivo Excel
+router.post('/postExcelImages', upload.single('file'), postExcelImages);
 
 const postLogin = require("../controllers/User/postLogin");
 const PostRegisterGoogle = require("../controllers/User/postRegisterGoogle");
 const getUser = require("../controllers/User/getUser");
 const getProductAdmin = require("../controllers/product/getProductAdmin");
 const getAllUsers = require("../controllers/User/getAllUser");
-const { createUserAdmin, validateUserAdmin } = require("../controllers/User/createUserAdmin");
+const { createUserAdmin, validateUserAdmin, updateUserAdmin, deleteUserAdmin, getAllUserAdmins } = require("../controllers/User/createUserAdmin");
+const {  
+  createCapacity,
+  getAllCapacities,
+  getCapacityById,
+  updateCapacity,
+  deleteCapacity,} = require('../controllers/Capacity/CapacitiesController');
+
+const {
+    createCategory,
+    getAllCategories,
+    getCategoryById,
+    updateCategory,
+    deleteCategory,
+  } = require("../controllers/Category/CategoryController");
+
+  const {
+    createBrand,
+    getAllBrands,
+    getBrandById,
+    updateBrand,
+    deleteBrand,
+  } = require("../controllers/Brand/BrandController");
+
+  const {
+    createColor,
+    getAllColors,
+    getColorById,
+    updateColor,
+    deleteColor,
+  } = require("../controllers/Color/ColorsController");
+
+  const {  
+    createSubcategory,
+    getAllSubcategories,
+    getSubcategoryById,
+    updateSubcategory,
+    deleteSubcategory,} = require('../controllers/SubCategory/SubCategory');
 
 const postShopping = require("../controllers/Carrito/PostShopping");
 const putShopping = require("../controllers/Carrito/PutShopping");
@@ -48,7 +105,7 @@ const postReview = require("../controllers/reviews/postReview");
 const putReview = require("../controllers/reviews/putReview");
 const getReview = require("../controllers/reviews/getReview");
 const getCategory = require("../controllers/product/getCategory");
-const getSubCategory = require("../controllers/product/getSubCategory");
+const getSubcategory = require("../controllers/product/getSubcategory");
 const PostRecoverPassword = require("../controllers/User/postRecoverPassword");
 const PostUpdatePassword = require("../controllers/User/postUpdatePassword");
 
@@ -78,19 +135,19 @@ router.get("/captureUserOrder", captureUserOrder);
 // Rutas de Productos
 router.get("/product", getProduct);
 router.get("/search/:product", searchProduct);
-router.get("/detail/:id", getProductByPk);
+router.get("/product/:id", getProductByPk);
 router.get("/admin", getProductAdmin);
 router.get("/property", getProperty);
 router.get("/product/discount", getDiscountProducts);
 router.get("/product/orderBy", getProductOrderBy);
 router.get("/product/brands", getBrands);
 router.get("/product/category", getCategory);
-router.get("/product/sub-category", getSubCategory);
+router.get("/product/sub-category", getSubcategory);
 
 router.post("/product", postProduct);
 router.delete("/product/:id", deleteProductByPk);
 router.put("/product/:id", putProductbyID);
-router.post("/postExcel", postExcel);
+
 
 
 // Rutas de Usuarios
@@ -101,6 +158,21 @@ router.post("/password-recover", PostRecoverPassword);
 router.post("/password-update", PostUpdatePassword);
 router.post("/userAdmin", createUserAdmin);
 router.post('/validateUserAdmin', validateUserAdmin);
+router.delete("/deleteUserAdmin/:id", deleteUserAdmin);
+router.put("/updateUserAdmin/:id", updateUserAdmin);
+router.get('/getAllUserAdmins', getAllUserAdmins);
+
+router.post("/createCategory", createCategory);
+router.get("/getAllCategories", getAllCategories);
+router.get("/getCategoryById/:id", getCategoryById);
+router.put("/updateCategory/:id", updateCategory);
+router.delete("/deleteCategory/:id", deleteCategory);
+
+router.post("/createBrand", createBrand);
+router.get("/getAllBrands", getAllBrands);
+router.get("/getBrandById/:id", getBrandById);
+router.put("/updateBrand/:id", updateBrand);
+router.delete("/deleteBrand/:id", deleteBrand);
 
 router.put("/user/:id", putUserById);
 router.put("/user/:id/password", putPassword);
@@ -109,6 +181,25 @@ router.get("/user/:id", getUser);
 router.get("/user", getUserByEmail);
 router.get("/users", getAllUsers);
 router.get("/purchases/:id", getAllPurchases);
+
+// Rutas para tamaños
+router.post('/createCapacities', createCapacity);
+router.get('/getAllCapacities', getAllCapacities);
+router.get('/getCapacitiesById/:id', getCapacityById);
+router.put('/updateCapacities/:id', updateCapacity);
+router.delete('/deleteCapacities/:id', deleteCapacity);
+
+router.post('/createSubcategories', createSubcategory);
+router.get('/getAllSubcategories', getAllSubcategories);
+router.get('/getSubcategoriesById/:id', getSubcategoryById);
+router.put('/updateSubcategories/:id', updateSubcategory);
+router.delete('/deleteSubcategories/:id', deleteSubcategory);
+
+router.post("/color", createColor);
+router.get("/colors", getAllColors);
+router.get("/color/:id", getColorById);
+router.put("/color/:id", updateColor);
+router.delete("/color/:id", deleteColor);
 
 // Rutas de Favoritos
 router.post("/postFavorite", postFavorite);

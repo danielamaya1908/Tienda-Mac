@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { User_order, ShoppingProduct, Size, Stock } = require("../../db");
+const { User_order, ShoppingProduct, Capacities, Stock } = require("../../db");
 const { PAYPAL_URL, PAYPAL_CLIENT, PAYPAL_SECRET_KEY, HOST_FRONT } = require("../../../config");
 const { sendOrderConfirmationEmail } = require("../../email/mailer/mailer");
 
@@ -46,15 +46,15 @@ const captureUserOrder = async (req, res) => {
       });
       const descuentoStock = userShoppingProducts.map(async (producto) => {
         const todoString = producto.dataValues.size.toString();
-        const sizeId = await Size.findOne({
+        const sizeId = await Capacities.findOne({
           where: { name: todoString },
         });
-        const idSize = sizeId.dataValues.id;
-        if (idSize) {
+        const idCapacities = sizeId.dataValues.id;
+        if (idCapacities) {
           const stockRecord = await Stock.findOne({
             where: {
               ProductId: producto.dataValues.productId,
-              SizeId: idSize,
+              CapacitiesId: idCapacities,
             },
           });
           if (stockRecord) {
@@ -67,7 +67,7 @@ const captureUserOrder = async (req, res) => {
               {
                 where: {
                   ProductId: producto.dataValues.productId,
-                  SizeId: idSize,
+                  CapacitiesId: idCapacities,
                 },
               }
             );

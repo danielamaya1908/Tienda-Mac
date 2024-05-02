@@ -1,13 +1,23 @@
-const deleteProductHandler = require("../../handlers/Product/deleteProductByPk");
+const { Product, Category, Brand } = require("../../db");
 
-const deleteProductController = async (req, res) => {
+// Función para eliminar un producto
+const deleteProduct = async (req, res) => {
   try {
-    await deleteProductHandler(req.params.id);
-    return res.status(200).json({ message: "Producto eliminado correctamente" });
+    const { id } = req.params;
+    const product = await Product.findByPk(id, {
+      include: [Category, Brand],
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await product.destroy();
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error("Error al eliminar producto:", error);
-    return res.status(500).json({ error: "Ocurrió un error en el servidor" });
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Error deleting product" });
   }
 };
 
-module.exports = deleteProductController;
+module.exports =  deleteProduct;

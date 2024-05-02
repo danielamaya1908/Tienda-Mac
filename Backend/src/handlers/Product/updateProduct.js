@@ -1,4 +1,4 @@
-const { Product, Image, Stock, Size, Color } = require("../../db");
+const { Product, Image, Stock, Capacities, Color } = require("../../db");
 
 const updateProduct = async (product) => {
   console.log(product);
@@ -33,14 +33,14 @@ const updateProduct = async (product) => {
 
     if (product.sizes) {
       for (const stockInfo of product.sizes) {
-        const [size, created] = await Size.findOrCreate({
+        const [size, created] = await Capacities.findOrCreate({
           where: { name: stockInfo.size },
         });
 
         const [stock, stockCreated] = await Stock.findOrCreate({
           where: {
             ProductId: productEdit.id,
-            SizeId: size.id,
+            CapacitiesId: size.id,
           },
           defaults: {
             quantity: stockInfo.stock,

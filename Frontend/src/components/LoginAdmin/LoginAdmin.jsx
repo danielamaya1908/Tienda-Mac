@@ -20,7 +20,7 @@ function LoginAdmin({ onLogin }) {
       .then((data) => {
         if (data.message === "User admin found") {
           onLogin();
-          navigate("/dashboard");
+          navigate("/7gP4mX!5vZwQj@n8rAe");
         } else {
           alert("Usuario no encontrado o credenciales incorrectas");
         }

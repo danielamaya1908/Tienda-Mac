@@ -9,6 +9,10 @@ module.exports = (sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      /* name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      }, */
       email: {
         type: DataTypes.STRING(255),
         unique: true,

@@ -46,7 +46,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark fixed-top" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'rgba(255, 255, 255, 0.8)' }}>
+    <nav className="navbar navbar-expand-lg navbar-dark fixed-top" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'rgba(255, 255, 255, 0.8)', position:"sticky", top:"0px", height:"90px" }}>
       <div className="container-fluid">
         <div className="d-flex justify-content-between align-items-center w-100">
           <div className="d-flex align-items-center me-3">
@@ -70,13 +70,13 @@ const Navbar = () => {
                 <a className="nav-link me-1" href="#">iPhone</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link me-1" href="#">Watch</a>
+                <a className="nav-link me-1" href="#">Apple Watch</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link me-1" href="#">AirPods</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link me-1" href="#">TV & Hogar</a>
+                <a className="nav-link me-1" href="#">Apple Tv & Hogar</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link me-1" href="#">Sonido</a>

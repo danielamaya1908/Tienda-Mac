@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Product, Image, Stock, Size } = require("../../db");
+const { Product, Image, Stock, Capacities } = require("../../db");
 
 const applySorting = async (sortBy) => {
   try {
@@ -28,7 +28,7 @@ const applySorting = async (sortBy) => {
       include: [
         {
           model: Stock,
-          include: [{ model: Size, attributes: ["name"] }],
+          include: [{ model: Capacities, attributes: ["name"] }],
         },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
       ],

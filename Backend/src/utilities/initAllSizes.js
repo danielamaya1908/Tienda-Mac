@@ -1,6 +1,6 @@
-const { Size } = require("../db");
+const { Capacities } = require("../db");
 
-const allSizes = [
+const allCapacitiess = [
   { name: "11 pulgadas" },
   { name: "12 pulgadas" },
   { name: "13 pulgadas" },
@@ -10,13 +10,13 @@ const allSizes = [
 ];
 
 
-const initializeSizes = async () => {
+const initializeCapacitiess = async () => {
   try {
     // Ajusta esto según tus necesidades
-    const sizesNames = allSizes.map((size) => size.name); // extraemos solo los nombres de cada talla.
-    const areTheyAlreadyCreated = await Size.findAll({ where: { name: sizesNames } });
+    const sizesNames = allCapacitiess.map((size) => size.name); // extraemos solo los nombres de cada talla.
+    const areTheyAlreadyCreated = await Capacities.findAll({ where: { name: sizesNames } });
     if (!areTheyAlreadyCreated.length) {
-      await Size.bulkCreate(allSizes);
+      await Capacities.bulkCreate(allCapacitiess);
     }
     console.log("Tallas inicializadas con éxito.");
   } catch (error) {
@@ -24,4 +24,4 @@ const initializeSizes = async () => {
   }
 };
 
-module.exports = initializeSizes;
+module.exports = initializeCapacitiess;

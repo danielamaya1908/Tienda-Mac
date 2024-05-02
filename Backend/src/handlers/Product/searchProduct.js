@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Product, Size, Stock, Image, Color } = require("../../db");
+const { Product, Capacities, Stock, Image, Color } = require("../../db");
 
 const search = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const search = async (req, res) => {
         },
       },
       include: [
-        { model: Size, attributes: ["name"], through: { model: Stock } },
+        { model: Capacities, attributes: ["name"], through: { model: Stock } },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
         { model: Color, attributes: ["name"], through: { attributes: [] } },
       ],
@@ -32,11 +32,11 @@ const search = async (req, res) => {
         modifiedProduct.Colors = modifiedProduct.Colors.map(({ name }) => name);
       }
 
-      modifiedProduct.Stocks = modifiedProduct.Sizes.map((size) => ({
-        [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Size
+      modifiedProduct.Stocks = modifiedProduct.Capacitiess.map((size) => ({
+        [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Capacities
       }));
 
-      delete modifiedProduct.Size;
+      delete modifiedProduct.Capacities;
 
       return modifiedProduct;
     });

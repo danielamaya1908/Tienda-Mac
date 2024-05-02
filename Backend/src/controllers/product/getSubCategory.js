@@ -1,6 +1,6 @@
 const { Product } = require("../../db");
 
-const getSubCategory = async (req, res) => {
+const getSubcategory = async (req, res) => {
   try {
     const products = await Product.findAll();
 
@@ -13,4 +13,4 @@ const getSubCategory = async (req, res) => {
   }
 };
 
-module.exports = getSubCategory;
+module.exports = getSubcategory;

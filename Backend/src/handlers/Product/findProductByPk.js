@@ -1,11 +1,11 @@
-const { Product, Image, Stock, Size, Color, Reviews } = require("../../db");
+const { Product, Image, Stock, Capacities, Color, Reviews } = require("../../db");
 
 const findProductByPk = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findByPk(id, {
       include: [
-        { model: Size, attributes: ["name"], through: { model: Stock } },
+        { model: Capacities, attributes: ["name"], through: { model: Stock } },
         { model: Image, attributes: ["url"], through: { attributes: [] } },
         { model: Color, attributes: ["name"], through: { attributes: [] } },
         {
@@ -33,12 +33,12 @@ const findProductByPk = async (req, res) => {
     }
 
     // Modificar el array de tallas y cantidades (stock)
-    modifiedProduct.Stocks = modifiedProduct.Sizes.map((size) => ({
-      [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Size
+    modifiedProduct.Stocks = modifiedProduct.Capacitiess.map((size) => ({
+      [size.name]: size.Stock.quantity, // Acceder a la cantidad de stock desde la relación con Capacities
     }));
 
-    // Eliminar la propiedad 'Size' si no es necesaria en este punto
-    delete modifiedProduct.Size;
+    // Eliminar la propiedad 'Capacities' si no es necesaria en este punto
+    delete modifiedProduct.Capacities;
 
     return res.status(200).json({
       data: modifiedProduct,
