@@ -34,6 +34,14 @@ const postExcelProductsProducts = async (req, res) => {
         color,
       } = row;
 
+      // Verificar si ya existe un producto con el mismo itemId
+      const existingProductById = await Product.findOne({ where: { itemId } });
+      if (existingProductById) {
+        console.log("Product with itemId already exists:", itemId);
+        continue;
+      }
+      
+
       // Buscar la instancia de Category utilizando el nombre proporcionado en el archivo Excel
       const categoryInstance = await Category.findOne({ where: { name: category } });
       if (!categoryInstance) {
@@ -97,7 +105,6 @@ const postExcelProductsProducts = async (req, res) => {
     console.error("Error creating products from Excel:", error);
     res.status(500).json({ message: "Error creating products from Excel" });
   } finally {
-    // Elimina el archivo Excel después de procesarlo
     if (req.file) {
       fs.unlinkSync(req.file.path);
     }

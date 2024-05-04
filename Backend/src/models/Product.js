@@ -10,6 +10,7 @@ module.exports = (sequelize) => {
     itemId: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true, // Agregar esta línea
     },
     name: {
       type: DataTypes.STRING,

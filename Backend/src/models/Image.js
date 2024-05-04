@@ -19,6 +19,14 @@ module.exports = (sequelize) => {
         key: "id",
       },
     },
+    itemId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "Products",
+        key: "itemId",
+      },
+    },
   });
 
   console.log("Image model defined");

@@ -28,6 +28,7 @@ const postExcelImages = async (req, res) => {
           const image = await Image.create({
             path: fullImagePath,
             productId: product.id,
+            itemId: itemId, // Agrega el itemId al crear la imagen
           });
 
           console.log(`Image ${image.id} uploaded for product ${product.id}`);

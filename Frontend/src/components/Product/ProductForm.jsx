@@ -137,6 +137,10 @@ const ProductForm = ({ onSubmit }) => {
     setShowExcelUpload(true);
   };
 
+  const handleCancelExcelUpload = () => {
+    setShowExcelUpload(false);
+  };
+
   const handleUploadExcel = (fileData) => {
     // Lógica para procesar archivo Excel
   };
@@ -146,7 +150,19 @@ const ProductForm = ({ onSubmit }) => {
   return (
     <div className="card">
       <div className="card-header">
-        <h2>Agregar Producto</h2>
+        {!showExcelUpload && (
+          <button className="btn btn-secondary" onClick={handleShowExcelUpload}>
+            Agregar Excel
+          </button>
+        )}
+        {showExcelUpload && (
+          <div>
+            <ExcelUpload onUpload={handleUploadExcel} />
+            <button className="btn btn-secondary" onClick={handleCancelExcelUpload}>
+              Cancelar
+            </button>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
@@ -245,8 +261,6 @@ const ProductForm = ({ onSubmit }) => {
           </div>
           <button type="submit" className="btn btn-primary">Agregar Producto</button>
         </form>
-        <button className="btn btn-secondary" onClick={handleShowExcelUpload}>Agregar Grupo de Productos por Excel</button>
-        {showExcelUpload && <ExcelUpload onUpload={handleUploadExcel} />}
       </div>
     </div>
   );
