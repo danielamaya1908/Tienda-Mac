@@ -25,6 +25,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/images', express.static('C:\\Users\\USER\\OneDrive\\Escritorio\\Tienda-Mac\\ImagesProducts'));
+
 const upload = multer({ dest: "uploads/" });
 
 app.post("/postExcelProducts", upload.single("file"), (req, res, next) => {

@@ -10,6 +10,7 @@ const searchProduct = require("../controllers/product/searchProduct");
 const postRegister = require("../controllers/User/postRegister");
 const postExcelProducts = require('../controllers/product/postExcelProducts');
 const postExcelImages = require('../controllers/product/postExcelImages');
+const getProductImages = require("../controllers/product/getProductImages");
 
 const multer = require('multer');
 
@@ -33,7 +34,6 @@ router.post('/postExcelImages', upload.single('file'), postExcelImages);
 const postLogin = require("../controllers/User/postLogin");
 const PostRegisterGoogle = require("../controllers/User/postRegisterGoogle");
 const getUser = require("../controllers/User/getUser");
-const getProductAdmin = require("../controllers/product/getProductAdmin");
 const getAllUsers = require("../controllers/User/getAllUser");
 const { createUserAdmin, validateUserAdmin, updateUserAdmin, deleteUserAdmin, getAllUserAdmins } = require("../controllers/User/createUserAdmin");
 const {  
@@ -136,7 +136,6 @@ router.get("/captureUserOrder", captureUserOrder);
 router.get("/product", getProduct);
 router.get("/search/:product", searchProduct);
 router.get("/product/:id", getProductByPk);
-router.get("/admin", getProductAdmin);
 router.get("/property", getProperty);
 router.get("/product/discount", getDiscountProducts);
 router.get("/product/orderBy", getProductOrderBy);
@@ -147,7 +146,7 @@ router.get("/product/sub-category", getSubcategory);
 router.post("/product", postProduct);
 router.delete("/product/:id", deleteProductByPk);
 router.put("/product/:id", putProductbyID);
-
+router.get("/products/:productId/images", getProductImages);
 
 
 // Rutas de Usuarios

@@ -1,10 +1,10 @@
-// Product.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductForm from '../Product/ProductForm';
 import ProductUpdate from '../Product/ProductUpdate';
 import ProductDetail from './ProductDetail';
 import MenuDashboard from '../MenuDashboard/MenuDashboard';
+import Pagination from '../Paginado/Pagination'; // Importa el componente Pagination
 
 const Product = () => {
     const [showProductForm, setShowProductForm] = useState(false);
@@ -12,10 +12,12 @@ const Product = () => {
     const [editProductId, setEditProductId] = useState(null);
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
+    const [itemsPerPage, setItemsPerPage] = useState(10); // Estado para la cantidad de elementos por página
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [currentPage, itemsPerPage]); // Actualiza la lista de productos cuando cambia la página o la cantidad de elementos por página
 
     useEffect(() => {
         if (selectedProductId) {
@@ -27,7 +29,8 @@ const Product = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:3005/product');
+            const offset = (currentPage - 1) * itemsPerPage;
+            const response = await axios.get(`http://localhost:3005/product?_page=${currentPage}&_limit=${itemsPerPage}`);
             if (response.data && Array.isArray(response.data)) {
                 setProducts(response.data);
             } else {
@@ -37,6 +40,7 @@ const Product = () => {
             console.error('Error fetching products:', error);
         }
     };
+    
 
     const fetchProduct = async (productId) => {
         try {
@@ -123,10 +127,8 @@ const Product = () => {
                                             <td>{product.priceUsd}</td>
                                             <td>{product.quantity}</td>
                                             <td>{product.guarantee}</td>
-                                      
                                             <td>{product.tax}</td>
                                             <td>{product.barcode}</td>
-                                           
                                             <td>
                                                 <button className="btn btn-info" onClick={() => handleShowDetails(product.id)}>Detalle</button>
                                                 <button className="btn btn-primary" onClick={() => handleEditProduct(product.id)}>Editar</button>
@@ -137,6 +139,15 @@ const Product = () => {
                                 </tbody>
                             </table>
                         </div>
+                        <Pagination
+                          totalItems={products.length} // Puedes usar products.length si no tienes la cantidad total de productos disponible
+                          itemsPerPageOptions={[5, 10, 20, 30, 40, 50]}
+                          defaultItemsPerPage={10}
+                          onPageChange={(page, itemsPerPage) => {
+                              setCurrentPage(page);
+                              setItemsPerPage(itemsPerPage);
+                          }}
+                        />
                     </main>
                 </div>
             </div>
