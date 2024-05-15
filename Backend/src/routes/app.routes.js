@@ -11,6 +11,7 @@ const postRegister = require("../controllers/User/postRegister");
 const postExcelProducts = require('../controllers/product/postExcelProducts');
 const postExcelImages = require('../controllers/product/postExcelImages');
 const getProductImages = require("../controllers/product/getProductImages");
+/* const postProductImages = require("../controllers/product/postProductImages"); */
 
 const multer = require('multer');
 
@@ -147,6 +148,7 @@ router.post("/product", postProduct);
 router.delete("/product/:id", deleteProductByPk);
 router.put("/product/:id", putProductbyID);
 router.get("/products/:productId/images", getProductImages);
+/* router.post("/products/:productId/images", upload.array('images'), postProductImages); */
 
 
 // Rutas de Usuarios
